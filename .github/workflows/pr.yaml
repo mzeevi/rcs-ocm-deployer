@@ -62,7 +62,7 @@ jobs:
           version: v0.18.0
           registry: false
 
-          
+
       - name: Setup rcs environment
         run: make ci-quickstart
         
