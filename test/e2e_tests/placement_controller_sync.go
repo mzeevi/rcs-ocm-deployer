@@ -6,6 +6,7 @@ import (
 	rcsv1alpha1 "github.com/dana-team/container-app-operator/api/v1alpha1"
 	"github.com/dana-team/rcs-ocm-deployer/internals/utils"
 	mock "github.com/dana-team/rcs-ocm-deployer/test/e2e_tests/mocks"
+	"github.com/dana-team/rcs-ocm-deployer/test/e2e_tests/testconsts"
 	utilst "github.com/dana-team/rcs-ocm-deployer/test/e2e_tests/utils"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -28,7 +29,7 @@ var _ = Describe("Validate the placement sync controller", func() {
 		Eventually(func() bool {
 			assertionCapp = utilst.GetCapp(k8sClient, assertionCapp.Name, assertionCapp.Namespace)
 			return utilst.DoesFinalizerExist(k8sClient, assertionCapp.Name, assertionCapp.Namespace, "dana.io/capp-cleanup")
-		}, TimeoutCapp, CappCreationInterval).Should(BeTrue(), "Should fetch capp.")
+		}, testconsts.TimeoutCapp, testconsts.CappCreationInterval).Should(BeTrue(), "Should fetch capp.")
 
 	})
 
@@ -44,7 +45,7 @@ var _ = Describe("Validate the placement sync controller", func() {
 		Eventually(func() string {
 			assertionCapp = utilst.GetCapp(k8sClient, assertionCapp.Name, assertionCapp.Namespace)
 			return assertionCapp.Annotations["dana.io/has-placement"]
-		}, TimeoutCapp, CappCreationInterval).ShouldNot(Equal(""), "Should fetch capp.")
+		}, testconsts.TimeoutCapp, testconsts.CappCreationInterval).ShouldNot(Equal(""), "Should fetch capp.")
 		mwNamespace := assertionCapp.Annotations["dana.io/has-placement"]
 
 		By("Deletes capp")
@@ -56,7 +57,7 @@ var _ = Describe("Validate the placement sync controller", func() {
 			mwName := utils.NamespaceManifestWorkPrefix + assertionCapp.Namespace + "-" + assertionCapp.Name
 			Expect(k8sClient.Get(context.Background(), client.ObjectKey{Name: mwName, Namespace: mwNamespace}, manifestWork)).Should(Succeed())
 			return utilst.DoesResourceExist(k8sClient, manifestWork)
-		}, TimeoutCapp, CappCreationInterval).ShouldNot(BeFalse())
+		}, testconsts.TimeoutCapp, testconsts.CappCreationInterval).ShouldNot(BeFalse())
 	})
 
 	It("Should copy the secret from volumes to ManifestWork ", func() {
@@ -80,7 +81,7 @@ var _ = Describe("Validate the placement sync controller", func() {
 		Eventually(func() string {
 			assertionCapp = utilst.GetCapp(k8sClient, assertionCapp.Name, assertionCapp.Namespace)
 			return assertionCapp.Annotations["dana.io/has-placement"]
-		}, TimeoutCapp, CappCreationInterval).ShouldNot(Equal(""), "Should fetch capp.")
+		}, testconsts.TimeoutCapp, testconsts.CappCreationInterval).ShouldNot(Equal(""), "Should fetch capp.")
 		mwNamespace := assertionCapp.Annotations["dana.io/has-placement"]
 
 		By("Checks ManifestWork was synced with secret")
@@ -91,7 +92,7 @@ var _ = Describe("Validate the placement sync controller", func() {
 			secret, err := utilst.IsObjInManifestWork(k8sClient, *manifestWork, secret.Name, secret.Namespace, &corev1.Secret{}, "Secret")
 			Expect(err).Should(BeNil())
 			return secret
-		}, TimeoutCapp, CappCreationInterval).Should(BeTrue())
+		}, testconsts.TimeoutCapp, testconsts.CappCreationInterval).Should(BeTrue())
 	})
 
 	It("Should copy the secret from environment variables to ManifestWork ", func() {
@@ -115,7 +116,7 @@ var _ = Describe("Validate the placement sync controller", func() {
 		Eventually(func() string {
 			assertionCapp = utilst.GetCapp(k8sClient, assertionCapp.Name, assertionCapp.Namespace)
 			return assertionCapp.Annotations["dana.io/has-placement"]
-		}, TimeoutCapp, CappCreationInterval).ShouldNot(Equal(""), "Should fetch capp.")
+		}, testconsts.TimeoutCapp, testconsts.CappCreationInterval).ShouldNot(Equal(""), "Should fetch capp.")
 		mwNamespace := assertionCapp.Annotations["dana.io/has-placement"]
 
 		By("Checks ManifestWork was synced with secret")
@@ -126,7 +127,7 @@ var _ = Describe("Validate the placement sync controller", func() {
 			secret, err := utilst.IsObjInManifestWork(k8sClient, *manifestWork, secret.Name, secret.Namespace, &corev1.Secret{}, "Secret")
 			Expect(err).Should(BeNil())
 			return secret
-		}, TimeoutCapp, CappCreationInterval).Should(BeTrue())
+		}, testconsts.TimeoutCapp, testconsts.CappCreationInterval).Should(BeTrue())
 	})
 	It("Should copy the secret from RouteSpec to ManifestWork ", func() {
 		baseSecret := mock.CreateSecret()
@@ -144,7 +145,7 @@ var _ = Describe("Validate the placement sync controller", func() {
 		Eventually(func() string {
 			assertionCapp = utilst.GetCapp(k8sClient, assertionCapp.Name, assertionCapp.Namespace)
 			return assertionCapp.Annotations["dana.io/has-placement"]
-		}, TimeoutCapp, CappCreationInterval).ShouldNot(Equal(""), "Should fetch capp.")
+		}, testconsts.TimeoutCapp, testconsts.CappCreationInterval).ShouldNot(Equal(""), "Should fetch capp.")
 		mwNamespace := assertionCapp.Annotations["dana.io/has-placement"]
 
 		By("Checks ManifestWork was synced with secret")
@@ -155,7 +156,7 @@ var _ = Describe("Validate the placement sync controller", func() {
 			secret, err := utilst.IsObjInManifestWork(k8sClient, *manifestWork, secret.Name, secret.Namespace, &corev1.Secret{}, "Secret")
 			Expect(err).Should(BeNil())
 			return secret
-		}, TimeoutCapp, CappCreationInterval).Should(BeTrue())
+		}, testconsts.TimeoutCapp, testconsts.CappCreationInterval).Should(BeTrue())
 	})
 
 	It("Should copy the secret from imagePullSecrets to ManifestWork ", func() {
@@ -175,7 +176,7 @@ var _ = Describe("Validate the placement sync controller", func() {
 		Eventually(func() string {
 			assertionCapp = utilst.GetCapp(k8sClient, assertionCapp.Name, assertionCapp.Namespace)
 			return assertionCapp.Annotations["dana.io/has-placement"]
-		}, TimeoutCapp, CappCreationInterval).ShouldNot(Equal(""), "Should fetch capp.")
+		}, testconsts.TimeoutCapp, testconsts.CappCreationInterval).ShouldNot(Equal(""), "Should fetch capp.")
 		mwNamespace := assertionCapp.Annotations["dana.io/has-placement"]
 
 		By("Checks ManifestWork was synced with secret")
@@ -186,7 +187,7 @@ var _ = Describe("Validate the placement sync controller", func() {
 			secret, err := utilst.IsObjInManifestWork(k8sClient, *manifestWork, secret.Name, secret.Namespace, &corev1.Secret{}, "Secret")
 			Expect(err).Should(BeNil())
 			return secret
-		}, TimeoutCapp, CappCreationInterval).Should(BeTrue())
+		}, testconsts.TimeoutCapp, testconsts.CappCreationInterval).Should(BeTrue())
 	})
 
 	It("Should copy the rolebindings from capp's namespace to ManifestWork ", func() {
@@ -205,7 +206,7 @@ var _ = Describe("Validate the placement sync controller", func() {
 		Eventually(func() string {
 			assertionCapp = utilst.GetCapp(k8sClient, assertionCapp.Name, assertionCapp.Namespace)
 			return assertionCapp.Annotations["dana.io/has-placement"]
-		}, TimeoutCapp, CappCreationInterval).ShouldNot(Equal(""), "Should fetch capp.")
+		}, testconsts.TimeoutCapp, testconsts.CappCreationInterval).ShouldNot(Equal(""), "Should fetch capp.")
 		mwNamespace := assertionCapp.Annotations["dana.io/has-placement"]
 
 		By("Checks ManifestWork was synced with role and rolebinding")
@@ -215,7 +216,7 @@ var _ = Describe("Validate the placement sync controller", func() {
 			_ = k8sClient.Get(context.Background(), client.ObjectKey{Name: mwName, Namespace: mwNamespace}, manifestWork)
 			return utilst.IsRbacObjInManifestWork(k8sClient, *manifestWork, assertionCapp.Name, role.Namespace, "Role") &&
 				utilst.IsRbacObjInManifestWork(k8sClient, *manifestWork, assertionCapp.Name, roleBinding.Namespace, "RoleBinding")
-		}, TimeoutCapp, CappCreationInterval).Should(BeTrue())
+		}, testconsts.TimeoutCapp, testconsts.CappCreationInterval).Should(BeTrue())
 	})
 
 	It("Should copy the capp and capp's namespace to ManifestWork ", func() {
@@ -230,7 +231,7 @@ var _ = Describe("Validate the placement sync controller", func() {
 		Eventually(func() string {
 			assertionCapp = utilst.GetCapp(k8sClient, assertionCapp.Name, assertionCapp.Namespace)
 			return assertionCapp.Annotations["dana.io/has-placement"]
-		}, TimeoutCapp, CappCreationInterval).ShouldNot(Equal(""), "Should fetch capp.")
+		}, testconsts.TimeoutCapp, testconsts.CappCreationInterval).ShouldNot(Equal(""), "Should fetch capp.")
 		mwNamespace := assertionCapp.Annotations["dana.io/has-placement"]
 
 		By("Checks ManifestWork was synced with capp and namespace")
@@ -243,7 +244,7 @@ var _ = Describe("Validate the placement sync controller", func() {
 			capp, err := utilst.IsObjInManifestWork(k8sClient, *manifestWork, assertionCapp.Name, assertionCapp.Namespace, &rcsv1alpha1.Capp{}, "Capp")
 			Expect(err).Should(BeNil())
 			return ns && capp
-		}, TimeoutCapp, CappCreationInterval).Should(BeTrue())
+		}, testconsts.TimeoutCapp, testconsts.CappCreationInterval).Should(BeTrue())
 	})
 
 	It("Should copy the updated capp to ManifestWork ", func() {
@@ -258,7 +259,7 @@ var _ = Describe("Validate the placement sync controller", func() {
 		Eventually(func() string {
 			assertionCapp = utilst.GetCapp(k8sClient, assertionCapp.Name, assertionCapp.Namespace)
 			return assertionCapp.Annotations["dana.io/has-placement"]
-		}, TimeoutCapp, CappCreationInterval).ShouldNot(Equal(""), "Should fetch capp.")
+		}, testconsts.TimeoutCapp, testconsts.CappCreationInterval).ShouldNot(Equal(""), "Should fetch capp.")
 		mwNamespace := assertionCapp.Annotations["dana.io/has-placement"]
 
 		By("Update Capp")
@@ -271,12 +272,12 @@ var _ = Describe("Validate the placement sync controller", func() {
 		Eventually(func() interface{} {
 			_ = k8sClient.Get(context.Background(), client.ObjectKey{Name: mwName, Namespace: mwNamespace}, manifestWork)
 			return utilst.GetCappFromManifestWork(k8sClient, *manifestWork).Object["spec"].(map[string]interface{})["site"]
-		}, TimeoutCapp, CappCreationInterval).ShouldNot(BeNil())
+		}, testconsts.TimeoutCapp, testconsts.CappCreationInterval).ShouldNot(BeNil())
 
 		By("Checks ManifestWork was synced with new capp")
 		Eventually(func() string {
 			_ = k8sClient.Get(context.Background(), client.ObjectKey{Name: mwName, Namespace: mwNamespace}, manifestWork)
 			return utilst.GetCappFromManifestWork(k8sClient, *manifestWork).Object["spec"].(map[string]interface{})["site"].(string)
-		}, TimeoutCapp, CappCreationInterval).Should(Equal("cluster2"))
+		}, testconsts.TimeoutCapp, testconsts.CappCreationInterval).Should(Equal("cluster2"))
 	})
 })
