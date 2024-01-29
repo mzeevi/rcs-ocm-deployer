@@ -46,8 +46,6 @@ jobs:
         uses: container-tools/kind-action@v2
         with:
           cluster_name: hub
-
-        
       - name: Setup cluster1 KinD
         uses: container-tools/kind-action@v2
         with:
