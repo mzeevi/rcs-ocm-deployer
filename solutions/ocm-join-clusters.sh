@@ -2,6 +2,8 @@
 
 set -e
 
+clusteradm=""
+
 initialize_clusteradm() {
     if [ -x "$1" ]; then
         clusteradm="$1"

@@ -1,5 +1,8 @@
 #!/bin/bash
 
+kind=""
+clusteradm=""
+
 initialize_kind() {
     if [ -x "$1" ]; then
         kind="$1"
