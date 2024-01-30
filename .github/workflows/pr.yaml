@@ -94,9 +94,33 @@ jobs:
           namespace: "rcs-deployer-system"
           timeout: 60
           max-restarts: 0
+          
+      - name: Switch to cluster1
+        run: kubectl config use-context kind-cluster1
+
+      - name: Await addon
+        uses: jupyterhub/action-k8s-await-workloads@v2
+        with:
+          workloads: ""
+          namespace: "open-cluster-management-agent-addon"
+          timeout: 60
+          max-restarts: 0
+
+      - name: Switch to cluster2
+        run: kubectl config use-context kind-cluster1
+
+      - name: Await addon
+        uses: jupyterhub/action-k8s-await-workloads@v2
+        with:
+          workloads: ""
+          namespace: "open-cluster-management-agent-addon"
+          timeout: 60
+          max-restarts: 0
 
       - name: Run e2e test
-        run: make test-e2e
+        run: |
+          kubectl config use-context kind-hub
+          make test-e2e
         continue-on-error: true
 
       - name: test
