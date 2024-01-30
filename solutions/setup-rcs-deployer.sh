@@ -22,18 +22,6 @@ initialize_clusteradm() {
 initialize_kind "$1"
 initialize_clusteradm "$2"
 
-## Check if kind is executable
-#if [ ! -x "$kind" ]; then
-#    echo "Error: The specified kind binary is not executable or does not exist." >&2
-#    exit 1
-#fi
-#
-## Check if clusteradm is executable
-#if [ ! -x "$clusteradm" ]; then
-#    echo "Error: The specified clusteradm binary is not executable or does not exist." >&2
-#    exit 1
-#fi
-
 hub=${CLUSTER1:-hub}
 c1=${CLUSTER1:-cluster1}
 c2=${CLUSTER2:-cluster2}
@@ -76,7 +64,7 @@ make -C container-app-operator prereq
 make -C container-app-operator deploy IMG="${cappimage}"
 kubectl wait --for=condition=ready pods -l control-plane=controller-manager -n capp-operator-system
 if [ -n "$rcsimage" ] && [ "$rcsimage" != "controller:latest" ]; then
-  "${kind}" load docker-image ${rcsimage}
+  "${kind}" load docker-image ${rcsimage} --name "${c1}"
 fi
 
 kubectl config use-context "${c2ctx}"
@@ -84,7 +72,7 @@ make -C container-app-operator prereq
 make -C container-app-operator deploy IMG="${cappimage}"
 kubectl wait --for=condition=ready pods -l control-plane=controller-manager -n capp-operator-system
 if [ -n "$rcsimage" ] && [ "$rcsimage" != "controller:latest" ]; then
-  "${kind}" load docker-image ${rcsimage}
+  "${kind}" load docker-image ${rcsimage} --name "${c2}"
 fi
 
 rm -rf container-app-operator/

@@ -14,12 +14,6 @@ initialize_clusteradm() {
 
 initialize_clusteradm "$1"
 
-# Check if clusteradm is executable
-if [ ! -x "$clusteradm" ]; then
-    echo "Error: The specified clusteradm binary is not executable or does not exist." >&2
-    exit 1
-fi
-
 hub=${CLUSTER1:-hub}
 c1=${CLUSTER1:-cluster1}
 c2=${CLUSTER2:-cluster2}
