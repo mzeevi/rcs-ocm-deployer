@@ -79,13 +79,13 @@ jobs:
           registry: false
 
       - name: Build rcs-ocm-deployer image
-        run: make docker-build docker-push IMG=${HUB_IMAGE_REGISTRY}/rcs-ocm-deployer:test-${GITHUB_REF##*/}
+        run: make docker-build docker-push IMG=${IMAGE_REGISTRY}/rcs-ocm-deployer:test-${GITHUB_REF##*/}
 
       - name: Setup rcs environment
-        run: make ci-quickstart IMG=${HUB_IMAGE_REGISTRY}/rcs-ocm-deployer:test-${GITHUB_REF##*/}
+        run: make ci-quickstart IMG=${IMAGE_REGISTRY}/rcs-ocm-deployer:test-${GITHUB_REF##*/}
 
       - name: Deploy to rcs cluster
-        run: make deploy deploy-addon IMG=${HUB_IMAGE_REGISTRY}/rcs-ocm-deployer:test-${GITHUB_REF##*/}
+        run: make deploy deploy-addon IMG=${IMAGE_REGISTRY}/rcs-ocm-deployer:test-${GITHUB_REF##*/}
 
       - name: Await rcs
         uses: jupyterhub/action-k8s-await-workloads@v2
