@@ -4,7 +4,7 @@ on:
     inputs:
       logLevel:
         description: 'Log level'     
-        required: true
+        required: false
         default: 'warning'
   pull_request:
     branches:
@@ -42,6 +42,7 @@ jobs:
       IMAGE_REGISTRY: kind-registry:5000
       KIND_VERSION: v0.18.0
       K8S_VERSION: v1.26.3
+      RCS_NAMESPACE: rcs-deployer-system
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -90,13 +91,10 @@ jobs:
       - name: Await rcs
         uses: jupyterhub/action-k8s-await-workloads@v2
         with:
-          workloads: "" # all
-          namespace: "rcs-deployer-system"
+          workloads: ""
+          namespace: "${RCS_NAMESPACE}"
           timeout: 60
           max-restarts: 0
 
       - name: Run e2e test
-        run: kubectl config use-context kind-cluster1
-
-      - name: sd
-        run: kubectl get pods -A
+        run: make test-e2e
