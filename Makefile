@@ -160,12 +160,12 @@ helm: manifests kustomize helmify
 	$(KUSTOMIZE) build config/default | $(HELMIFY)
 
 .PHONY: local-quickstart
-local-quickstart: clusteradm ## Run the local-quickstart script
-	$(shell pwd)/solutions/local-quickstart.sh $(CLUSTERADM)
+local-quickstart: kind clusteradm ## Run the local-quickstart script
+	$(shell pwd)/solutions/local-quickstart.sh $(KIND) $(CLUSTERADM) $(IMG)
 
 .PHONY: ci-quickstart
-ci-quickstart: clusteradm ## Run the ci-quickstart script
-	$(shell pwd)/solutions/ci-quickstart.sh $(CLUSTERADM)
+ci-quickstart: kind clusteradm ## Run the ci-quickstart script
+	$(shell pwd)/solutions/ci-quickstart.sh $(KIND) $(CLUSTERADM) $(IMG)
 
 ##@ Build Dependencies
 
@@ -181,10 +181,12 @@ CONTROLLER_GEN ?= $(LOCALBIN)/controller-gen
 ENVTEST ?= $(LOCALBIN)/setup-envtest
 HELMIFY ?= $(LOCALBIN)/helmify
 CLUSTERADM ?= $(LOCALBIN)/clusteradm
+KIND ?= $(LOCALBIN)/kind
 
 ## Tool Versions
 KUSTOMIZE_VERSION ?= v5.2.1
 CONTROLLER_TOOLS_VERSION ?= v0.13.0
+KIND_VERSION ?= v0.18.0
 
 .PHONY: kustomize
 kustomize: $(KUSTOMIZE) ## Download kustomize locally if necessary. If wrong version is installed, it will be removed before downloading.
@@ -215,3 +217,8 @@ $(HELMIFY): $(LOCALBIN)
 clusteradm: $(CLUSTERADM) ## Download clusteradm locally if necessary.
 $(CLUSTERADM): $(LOCALBIN)
 	test -s $(LOCALBIN)/clusteradm || curl -L https://raw.githubusercontent.com/open-cluster-management-io/clusteradm/main/install.sh | sed  's|/usr/local/bin|$(LOCALBIN)|g' | bash
+
+.PHONY: kind
+kind: $(KIND) ## Download kind locally if necessary.
+$(KIND): $(LOCALBIN)
+	test -s $(LOCALBIN)/kind || GOBIN=$(LOCALBIN) go install sigs.k8s.io/kind@$(KIND_VERSION)

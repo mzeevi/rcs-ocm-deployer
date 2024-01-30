@@ -1,19 +1,33 @@
 #!/bin/bash
 
+initialize_kind() {
+    if [ -x "$1" ]; then
+        kind="$1"
+    else
+        kind="/usr/local/bin/kind"
+    fi
+}
 
 initialize_clusteradm() {
-    if [ -x "$1" ]; then
-        clusteradm="$1"
+    if [ -x "$2" ]; then
+        clusteradm="$2"
     else
         clusteradm="/usr/local/bin/clusteradm"
     fi
 }
 
-initialize_clusteradm "$1"
+initialize_kind "$1"
+initialize_clusteradm "$2"
 
 # Check if clusteradm is executable
 if [ ! -x "$clusteradm" ]; then
     echo "Error: The specified clusteradm binary is not executable or does not exist." >&2
+    exit 1
+fi
+
+# Check if kind is executable
+if [ ! -x "$kind" ]; then
+    echo "Error: The specified kind binary is not executable or does not exist." >&2
     exit 1
 fi
 
@@ -25,6 +39,7 @@ hubctx="kind-${hub}"
 c1ctx="kind-${c1}"
 c2ctx="kind-${c2}"
 
+rcsimage="$3"
 cappimage="ghcr.io/dana-team/container-app-operator:main"
 clusterset="test-clusterset"
 ns="test"
@@ -57,11 +72,17 @@ kubectl config use-context "${c1ctx}"
 make -C container-app-operator prereq
 make -C container-app-operator deploy IMG="${cappimage}"
 kubectl wait --for=condition=ready pods -l control-plane=controller-manager -n capp-operator-system
+if [ -n "$rcsimage" ] && [ "$rcsimage" != "controller:latest" ]; then
+  "${kind}" load docker-image ${rcsimage}
+fi
 
 kubectl config use-context "${c2ctx}"
 make -C container-app-operator prereq
 make -C container-app-operator deploy IMG="${cappimage}"
 kubectl wait --for=condition=ready pods -l control-plane=controller-manager -n capp-operator-system
+if [ -n "$rcsimage" ] && [ "$rcsimage" != "controller:latest" ]; then
+  "${kind}" load docker-image ${rcsimage}
+fi
 
 rm -rf container-app-operator/
 
