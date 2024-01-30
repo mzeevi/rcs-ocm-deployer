@@ -98,8 +98,13 @@ jobs:
       - name: Run e2e test
         run: |
           make test-e2e
-          kubectl get capp -A -oyaml
         continue-on-error: true
+
+      - name: test
+        run: |
+          kubectl get pods -A
+          kubectl get capp -A -oyaml
+          kubectl logs -l app=elasticsearch -n rcs-deployer-system -l control-plane=controller-manager
 
       - name: test
         run: |
