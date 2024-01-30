@@ -79,7 +79,7 @@ jobs:
           timeout: 60
           max-restarts: 0
 
-      - name: Run e2e testsy
+      - name: Run e2e test
         run: kubectl config use-context kind-cluster1
 
       - name: sd
