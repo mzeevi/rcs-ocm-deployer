@@ -2,11 +2,11 @@ package e2e_tests
 
 import (
 	"context"
+	"github.com/dana-team/rcs-ocm-deployer/test/e2e_tests/testconsts"
 
 	rcsv1alpha1 "github.com/dana-team/container-app-operator/api/v1alpha1"
 	"github.com/dana-team/rcs-ocm-deployer/internals/utils"
 	mock "github.com/dana-team/rcs-ocm-deployer/test/e2e_tests/mocks"
-	"github.com/dana-team/rcs-ocm-deployer/test/e2e_tests/testconsts"
 	utilst "github.com/dana-team/rcs-ocm-deployer/test/e2e_tests/utils"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -65,12 +65,19 @@ var _ = Describe("Validate the placement sync controller", func() {
 		secret := utilst.CreateSecret(k8sClient, baseSecret)
 		baseCapp := mock.CreateBaseCapp()
 		baseCapp.Spec.ConfigurationSpec.Template.Spec.Volumes = append(baseCapp.Spec.ConfigurationSpec.Template.Spec.Volumes, corev1.Volume{
+			Name: secret.Name,
 			VolumeSource: corev1.VolumeSource{
 				Secret: &corev1.SecretVolumeSource{
 					SecretName: secret.Name,
 				},
 			},
 		})
+
+		baseCapp.Spec.ConfigurationSpec.Template.Spec.Containers[0].VolumeMounts = append(baseCapp.Spec.ConfigurationSpec.Template.Spec.Containers[0].VolumeMounts, corev1.VolumeMount{
+			Name:      secret.Name,
+			MountPath: "/test/mount",
+		})
+
 		desiredCapp := utilst.CreateCapp(k8sClient, baseCapp)
 
 		By("Checks unique creation of Capp")

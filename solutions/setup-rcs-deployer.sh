@@ -25,7 +25,7 @@ hubctx="kind-${hub}"
 c1ctx="kind-${c1}"
 c2ctx="kind-${c2}"
 
-cappimage="ghcr.io/dana-team/rcs-ocm-deployer:main"
+cappimage="ghcr.io/dana-team/container-app-operator:main"
 clusterset="test-clusterset"
 ns="test"
 
