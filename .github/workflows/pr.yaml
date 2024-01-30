@@ -100,7 +100,6 @@ jobs:
           make test-e2e
         continue-on-error: true
 
-
       - name: test
         run: |
           kubectl get pods -A
