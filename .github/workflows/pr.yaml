@@ -47,28 +47,37 @@ jobs:
         with:
           version: v0.18.0
           cluster_name: hub
-          
+          config: ./solutions/kind-hub-config.yaml
+          registry: true
+
       - name: Setup cluster1 KinD
         uses: container-tools/kind-action@v2
         with:
           cluster_name: cluster1
           version: v0.18.0
-          registry: false
+          config: ./solutions/kind-cluster-1-config.yaml
+          registry: true
           
       - name: Setup cluster2 KinD
         uses: container-tools/kind-action@v2
         with:
           cluster_name: cluster2
           version: v0.18.0
-          registry: false
+          config: ./solutions/kind-cluster-2-config.yaml
+          registry: true
 
       - name: Setup rcs environment
         run: make ci-quickstart
         
       - name: Build rcs-ocm-deployer image
         run: make docker-build docker-push IMG=kind-registry:5000/rcs-ocm-deployer:test-${GITHUB_REF##*/}
-        
-      - name: Deploy to cluster
+
+      - name: Push to cluster1 registry
+        run: |
+          make docker-push IMG=kind-registry:5001/rcs-ocm-deployer:test-${GITHUB_REF##*/}
+          make docker-push IMG=kind-registry:5002/rcs-ocm-deployer:test-${GITHUB_REF##*/}
+
+      - name: Deploy to rcs cluster
         run: make install deploy deploy-addon IMG=kind-registry:5000/rcs-ocm-deployer:test-${GITHUB_REF##*/}
 
       - name: Await rcs
