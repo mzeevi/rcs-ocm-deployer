@@ -13,7 +13,7 @@ import (
 const (
 	charset              = "abcdefghijklmnopqrstuvwxyz0123456789"
 	RandStrLength        = 10
-	TimeoutCapp          = 60 * time.Second
+	TimeoutCapp          = 10 * time.Second
 	CappCreationInterval = 2 * time.Second
 )
 

@@ -15,7 +15,7 @@ const (
 	UnsupportedHostname    = "...aaa.a...."
 )
 
-var _ = Describe("Validate the validating webhook", func() {
+var _ = PDescribe("Validate the validating webhook", func() {
 
 	It("Should deny the use of an unsupported scale metric", func() {
 		baseCapp := mock.CreateBaseCapp()

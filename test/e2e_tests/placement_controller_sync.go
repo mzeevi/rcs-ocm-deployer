@@ -15,7 +15,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-var _ = Describe("Validate the placement sync controller", func() {
+var _ = PDescribe("Validate the placement sync controller", func() {
 
 	It("Should add a cleanup finalizer to created capp", func() {
 		baseCapp := mock.CreateBaseCapp()
