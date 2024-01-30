@@ -62,7 +62,6 @@ jobs:
           version: v0.18.0
           registry: false
 
-
       - name: Setup rcs environment
         run: make ci-quickstart
         
@@ -79,6 +78,7 @@ jobs:
           namespace: "rcs-ocm-deployer"
           timeout: 60
           max-restarts: 0
-        
+
+
       - name: Run e2e tests
         run: kubectl get pods -A
