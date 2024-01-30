@@ -95,7 +95,6 @@ jobs:
           timeout: 60
           max-restarts: 0
 
-
       - name: Run e2e test
         run: |
           make test-e2e
