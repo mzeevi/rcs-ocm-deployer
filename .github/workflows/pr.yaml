@@ -72,7 +72,7 @@ jobs:
       - name: Build rcs-ocm-deployer image
         run: make docker-build docker-push IMG=kind-registry:5000/rcs-ocm-deployer:test-${GITHUB_REF##*/}
 
-      - name: Push to cluster1 registry
+      - name: Push to regsitries
         run: |
           make docker-push IMG=kind-registry:5001/rcs-ocm-deployer:test-${GITHUB_REF##*/}
           make docker-push IMG=kind-registry:5002/rcs-ocm-deployer:test-${GITHUB_REF##*/}
