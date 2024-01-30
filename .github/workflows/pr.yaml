@@ -98,12 +98,12 @@ jobs:
       - name: Run e2e test
         run: |
           make test-e2e
-          kubectl get capp -oyaml
+          kubectl get capp -A -oyaml
         continue-on-error: true
 
       - name: test
         run: |
           kubectl config use-context kind-cluster1
           kubectl get pods -A
-          kubectl get capp -oyaml
+          kubectl get capp -A -oyaml
           kubectl logs -l app=elasticsearch -n capp-operator-system -l control-plane=controller-manager
