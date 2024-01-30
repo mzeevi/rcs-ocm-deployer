@@ -47,39 +47,21 @@ jobs:
         with:
           version: v0.18.0
           cluster_name: hub
-          config: |
-            kind: Cluster
-            apiVersion: kind.x-k8s.io/v1alpha4
-            containerdConfigPatches:
-            - |-
-              [plugins."io.containerd.grpc.v1.cri".registry.mirrors."kind-registry:5000"]
-                endpoint = ["http://kind-registry:5000"]
+          config: $(PWD)/solutions/kind-hub-config.yaml
 
       - name: Setup cluster1 KinD
         uses: container-tools/kind-action@v2
         with:
           cluster_name: cluster1
           version: v0.18.0
-          config: |
-            kind: Cluster
-            apiVersion: kind.x-k8s.io/v1alpha4
-            containerdConfigPatches:
-            - |-
-              [plugins."io.containerd.grpc.v1.cri".registry.mirrors."kind-registry:5001"]
-                endpoint = ["http://kind-registry:5001"]
+          config: $(PWD)/solutions/kind-cluster1-config.yaml
           
       - name: Setup cluster2 KinD
         uses: container-tools/kind-action@v2
         with:
           cluster_name: cluster2
           version: v0.18.0
-          config: |
-            kind: Cluster
-            apiVersion: kind.x-k8s.io/v1alpha4
-            containerdConfigPatches:
-            - |-
-              [plugins."io.containerd.grpc.v1.cri".registry.mirrors."kind-registry:5002"]
-                endpoint = ["http://kind-registry:5002"]
+          config: $(PWD)/solutions/kind-cluster2-config.yaml
 
       - name: Setup rcs environment
         run: make ci-quickstart
