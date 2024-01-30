@@ -4,17 +4,17 @@ on:
     branches:
       - main
     types: [opened, reopened, synchronize]
-  workflow_run:
-    workflows: [golangci-lint]
-    types: [completed]
+#  workflow_run:
+#    workflows: [golangci-lint]
+#    types: [completed]
     
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+#concurrency:
+#  group: ${{ github.workflow }}-${{ github.ref }}
+#  cancel-in-progress: true
 
 jobs:
   unit-test:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+#    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: unit-test
     runs-on: ubuntu-latest
     steps:
@@ -28,54 +28,91 @@ jobs:
       run: go test ./internals/...
 
   e2e-tests:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+#    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: e2e-tests
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      IMAGE_REGISTRY: kind-registry:5000
+      HUB_IMAGE_REGISTRY: kind-registry:5000
+      CLUSTER1_IMAGE_REGISTRY: kind-registry:5001
+      CLUSTER2_IMAGE_REGISTRY: kind-registry:5002
+      KIND_VERSION: v0.18.0
+      K8S_VERSION: v1.26.3
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
       - name: Setup Go
         uses: actions/setup-go@v4
         with:
           go-version-file: go.mod
+
+      - name: Configure insecure registry
+        run: |
+          #sudo cat /etc/docker/daemon.json
           
-      - name: Setup Hub KinD
+          # allow insecure registry but keep original config!
+          sudo bash -c "cat <<EOF >/etc/docker/daemon.json
+          {
+            \"exec-opts\": [\"native.cgroupdriver=cgroupfs\"],
+            \"cgroup-parent\": \"/actions_job\",
+            \"insecure-registries\" : [\"${HUB_IMAGE_REGISTRY},${CLUSTER1_IMAGE_REGISTRY},${CLUSTER2_IMAGE_REGISTRY}\"]
+          }
+          EOF"
+          
+          #sudo cat /etc/docker/daemon.json
+          sudo systemctl restart docker
+          
+          # same for podman
+          sudo bash -c "cat <<EOF >/etc/containers/registries.conf
+          [[registry]]
+          location=\"${HUB_IMAGE_REGISTRY},${CLUSTER1_IMAGE_REGISTRY},${CLUSTER2_IMAGE_REGISTRY}\"
+          insecure=true
+          EOF"
+          #sudo cat /etc/containers/registries.conf
+      - name: Start kind cluster
         uses: container-tools/kind-action@v2
         with:
-          version: v0.18.0
           cluster_name: hub
-          config: $(PWD)/solutions/kind-hub-config.yaml
+          version: ${{env.KIND_VERSION}}
+          config: ./solutions/kind-hub-config.yaml
+          node_image: kindest/node:${{env.K8S_VERSION}}
+          kubectl_version: ${{env.K8S_VERSION}}
+          registry: true
 
-      - name: Setup cluster1 KinD
+      - name: Start kind cluster
         uses: container-tools/kind-action@v2
         with:
           cluster_name: cluster1
-          version: v0.18.0
-          config: $(PWD)/solutions/kind-cluster1-config.yaml
-          
-      - name: Setup cluster2 KinD
+          version: ${{env.KIND_VERSION}}
+          config: ./solutions/kind-cluster2-config.yaml
+          node_image: kindest/node:${{env.K8S_VERSION}}
+          kubectl_version: ${{env.K8S_VERSION}}
+          registry: true
+
+      - name: Start kind cluster
         uses: container-tools/kind-action@v2
         with:
           cluster_name: cluster2
-          version: v0.18.0
-          config: $(PWD)/solutions/kind-cluster2-config.yaml
+          version: ${{env.KIND_VERSION}}
+          config: ./solutions/kind-cluster1-config.yaml
+          node_image: kindest/node:${{env.K8S_VERSION}}
+          kubectl_version: ${{env.K8S_VERSION}}
+          registry: true
 
       - name: Setup rcs environment
         run: make ci-quickstart
         
       - name: Build rcs-ocm-deployer image
-        run: make docker-build docker-push IMG=kind-registry:5000/rcs-ocm-deployer:test-${GITHUB_REF##*/}
+        run: make docker-build docker-push IMG=${HUB_IMAGE_REGISTRY}/rcs-ocm-deployer:test-${GITHUB_REF##*/}
 
       - name: Push to all  registries
         run: |
-          make docker-push IMG=kind-registry:5001/rcs-ocm-deployer:test-${GITHUB_REF##*/}
-          make docker-push IMG=kind-registry:5002/rcs-ocm-deployer:test-${GITHUB_REF##*/}
+          make docker-push IMG=${CLUSTER1_IMAGE_REGISTRY}/rcs-ocm-deployer:test-${GITHUB_REF##*/}
+          make docker-push IMG=${CLUSTER2_IMAGE_REGISTRY}/rcs-ocm-deployer:test-${GITHUB_REF##*/}
 
       - name: Deploy to rcs cluster
-        run: make install deploy deploy-addon IMG=kind-registry:5000/rcs-ocm-deployer:test-${GITHUB_REF##*/}
+        run: make install deploy deploy-addon IMG=${HUB_IMAGE_REGISTRY}/rcs-ocm-deployer:test-${GITHUB_REF##*/}
 
       - name: Await rcs
         uses: jupyterhub/action-k8s-await-workloads@v2
