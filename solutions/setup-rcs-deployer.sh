@@ -22,17 +22,17 @@ initialize_clusteradm() {
 initialize_kind "$1"
 initialize_clusteradm "$2"
 
-# Check if kind is executable
-if [ ! -x "$kind" ]; then
-    echo "Error: The specified kind binary is not executable or does not exist." >&2
-    exit 1
-fi
-
-# Check if clusteradm is executable
-if [ ! -x "$clusteradm" ]; then
-    echo "Error: The specified clusteradm binary is not executable or does not exist." >&2
-    exit 1
-fi
+## Check if kind is executable
+#if [ ! -x "$kind" ]; then
+#    echo "Error: The specified kind binary is not executable or does not exist." >&2
+#    exit 1
+#fi
+#
+## Check if clusteradm is executable
+#if [ ! -x "$clusteradm" ]; then
+#    echo "Error: The specified clusteradm binary is not executable or does not exist." >&2
+#    exit 1
+#fi
 
 hub=${CLUSTER1:-hub}
 c1=${CLUSTER1:-cluster1}
