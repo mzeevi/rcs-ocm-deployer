@@ -14,7 +14,7 @@ It offers an auto cluster scheduler based on cluster usage and availability, req
 
 ## Capp
 
-This operator works together with the `container-app-operator`. For more information about `Capp` and about its API, please check [the Capp repo](https://github.com/dana-team/container-app-operator).
+This operator works together  with the `container-app-operator`. For more information about `Capp` and about its API, please check [the Capp repo](https://github.com/dana-team/container-app-operator).
 
 ## Open Cluster Management
 
