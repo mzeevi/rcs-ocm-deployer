@@ -47,24 +47,39 @@ jobs:
         with:
           version: v0.18.0
           cluster_name: hub
-          config: ./solutions/kind-hub-config.yaml
-          registry: true
+          config: |
+            kind: Cluster
+            apiVersion: kind.x-k8s.io/v1alpha4
+            containerdConfigPatches:
+            - |-
+              [plugins."io.containerd.grpc.v1.cri".registry.mirrors."kind-registry:5000"]
+                endpoint = ["http://kind-registry:5000"]
 
       - name: Setup cluster1 KinD
         uses: container-tools/kind-action@v2
         with:
           cluster_name: cluster1
           version: v0.18.0
-          config: ./solutions/kind-cluster-1-config.yaml
-          registry: true
+          config: |
+            kind: Cluster
+            apiVersion: kind.x-k8s.io/v1alpha4
+            containerdConfigPatches:
+            - |-
+              [plugins."io.containerd.grpc.v1.cri".registry.mirrors."kind-registry:5001"]
+                endpoint = ["http://kind-registry:5001"]
           
       - name: Setup cluster2 KinD
         uses: container-tools/kind-action@v2
         with:
           cluster_name: cluster2
           version: v0.18.0
-          config: ./solutions/kind-cluster-2-config.yaml
-          registry: true
+          config: |
+            kind: Cluster
+            apiVersion: kind.x-k8s.io/v1alpha4
+            containerdConfigPatches:
+            - |-
+              [plugins."io.containerd.grpc.v1.cri".registry.mirrors."kind-registry:5002"]
+                endpoint = ["http://kind-registry:5002"]
 
       - name: Setup rcs environment
         run: make ci-quickstart
@@ -72,7 +87,7 @@ jobs:
       - name: Build rcs-ocm-deployer image
         run: make docker-build docker-push IMG=kind-registry:5000/rcs-ocm-deployer:test-${GITHUB_REF##*/}
 
-      - name: Push to all registries
+      - name: Push to all  registries
         run: |
           make docker-push IMG=kind-registry:5001/rcs-ocm-deployer:test-${GITHUB_REF##*/}
           make docker-push IMG=kind-registry:5002/rcs-ocm-deployer:test-${GITHUB_REF##*/}
@@ -90,7 +105,6 @@ jobs:
 
       - name: Run e2e test
         run: kubectl config use-context kind-cluster1
-
 
       - name: sd
         run: kubectl get pods -A
