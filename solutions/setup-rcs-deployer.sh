@@ -56,9 +56,13 @@ make -C container-app-operator install
 kubectl config use-context "${c1ctx}"
 make -C container-app-operator prereq
 make -C container-app-operator deploy IMG="${cappimage}"
+kubectl wait --for=condition=ready pods -l control-plane=controller-manager -n capp-operator-system
+
 kubectl config use-context "${c2ctx}"
 make -C container-app-operator prereq
 make -C container-app-operator deploy IMG="${cappimage}"
+kubectl wait --for=condition=ready pods -l control-plane=controller-manager -n capp-operator-system
+
 rm -rf container-app-operator/
 
 # Create RCSConfig Object on Hub
