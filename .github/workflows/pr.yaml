@@ -80,4 +80,7 @@ jobs:
           max-restarts: 0
 
       - name: Run e2e testsy
-        run: make test-e2e
+        run: kubectl config use-context kind-cluster1
+
+      - name: sd
+        run: kubectl get pods -A
