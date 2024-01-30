@@ -42,7 +42,6 @@ jobs:
       IMAGE_REGISTRY: kind-registry:5000
       KIND_VERSION: v0.18.0
       K8S_VERSION: v1.26.3
-      RCS_NAMESPACE: rcs-deployer-system
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -92,7 +91,7 @@ jobs:
         uses: jupyterhub/action-k8s-await-workloads@v2
         with:
           workloads: ""
-          namespace: "${RCS_NAMESPACE}"
+          namespace: "rcs-deployer-system"
           timeout: 60
           max-restarts: 0
 
