@@ -80,5 +80,5 @@ jobs:
           max-restarts: 0
 
 
-      - name: Run e2e tests
+      - name: Run e2e testsy
         run: kubectl get pods -A
