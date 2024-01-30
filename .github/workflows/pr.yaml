@@ -56,7 +56,7 @@ jobs:
           {
             \"exec-opts\": [\"native.cgroupdriver=cgroupfs\"],
             \"cgroup-parent\": \"/actions_job\",
-            \"insecure-registries\" : [\"${HUB_IMAGE_REGISTRY},${CLUSTER1_IMAGE_REGISTRY},${CLUSTER2_IMAGE_REGISTRY}\"]
+            \"insecure-registries\" : [\"${HUB_IMAGE_REGISTRY}\"]
           }
           EOF"
           
@@ -66,7 +66,7 @@ jobs:
           # same for podman
           sudo bash -c "cat <<EOF >/etc/containers/registries.conf
           [[registry]]
-          location=\"${HUB_IMAGE_REGISTRY},${CLUSTER1_IMAGE_REGISTRY},${CLUSTER2_IMAGE_REGISTRY}\"
+          location=\"${HUB_IMAGE_REGISTRY}\"
           insecure=true
           EOF"
           #sudo cat /etc/containers/registries.conf
