@@ -5,20 +5,14 @@ cd $(dirname ${BASH_SOURCE})
 set -e
 
 initialize_kind() {
-    if [ -x "$1" ]; then
+    if [ test -s "$1" ]; then
         kind="$1"
     else
-        kind="/usr/local/bin/clusteradm"
+        kind="/usr/local/bin/kind"
     fi
 }
 
 initialize_kind "$1"
-
-# Check if kind is executable
-if [ ! -x "$kind" ]; then
-    echo "Error: The specified kind binary is not executable or does not exist." >&2
-    exit 1
-fi
 
 hub=${CLUSTER1:-hub}
 c1=${CLUSTER1:-cluster1}
