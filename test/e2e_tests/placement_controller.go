@@ -8,7 +8,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = PDescribe("Validate the placement controller", func() {
+var _ = Describe("Validate the placement controller", func() {
 
 	It("Should update the site in status and an annotation", func() {
 		baseCapp := mock.CreateBaseCapp()
