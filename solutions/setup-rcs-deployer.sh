@@ -12,8 +12,8 @@ initialize_kind() {
 }
 
 initialize_clusteradm() {
-    if test -s "$2"; then
-        clusteradm="$2"
+    if test -s "$1"; then
+        clusteradm="$1"
     else
         clusteradm="/usr/local/bin/clusteradm"
     fi
