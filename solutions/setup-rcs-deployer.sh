@@ -4,7 +4,7 @@ kind=""
 clusteradm=""
 
 initialize_kind() {
-    if [ test -s "$1" ]; then
+    if test -s "$1"; then
         kind="$1"
     else
         kind="/usr/local/bin/kind"
@@ -12,7 +12,7 @@ initialize_kind() {
 }
 
 initialize_clusteradm() {
-    if [ test -s "$2" ]; then
+    if test -s "$2"; then
         clusteradm="$2"
     else
         clusteradm="/usr/local/bin/clusteradm"

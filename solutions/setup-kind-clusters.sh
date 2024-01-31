@@ -5,7 +5,7 @@ cd $(dirname ${BASH_SOURCE})
 set -e
 
 initialize_kind() {
-    if [ test -s "$1" ]; then
+    if test -s "$1"; then
         kind="$1"
     else
         kind="/usr/local/bin/kind"
